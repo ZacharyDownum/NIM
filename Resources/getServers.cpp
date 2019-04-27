@@ -1,4 +1,4 @@
-#include "TicTacToe.h"
+#include "nim.h"
 #include <WinSock2.h>
 #include <iostream>
 
@@ -31,6 +31,7 @@ int getServers(SOCKET s, const char *broadcastAddress, const char *remotePort, S
 Task 3: Add code here that will send the TicTacToe_QUERY message to the broadcastAddress using the remotePort (see function header).
 ****/
 
+	UDP_send(s, NIM_QUERY, strlen(NIM_QUERY) + 1, broadcastAddress, remotePort);
 
 	// Receive incoming UDP datagrams (with a maximum of 2 second wait before each UDP_recv() function call
 	// As you read datagrams, if they start with the prefix: TicTacToe_NAME, parse out the server's name
@@ -44,7 +45,7 @@ Task 3: Add code here that will send the TicTacToe_QUERY message to the broadcas
 /****			
 Task 4a: Add code here that will receive a response to the previous broadcast message
 ****/		
-
+		numBytesRecvd = UDP_recv(s, recvBuffer, MAX_RECV_BUFFER, host, port);
 
 		// Ignoring responses that were sent using the broadcastAddress.  We need specific IP Address
 		while (status > 0 && numBytesRecvd > 0 && strcmp(host,broadcastAddress) != 0) {
@@ -56,7 +57,16 @@ Task 4b: Inside this while loop, parse the response, which should be a C-string 
 		 (ii) assign the IP Address from which the response originated to serverArray[numServers].host
 		 (iii) assign the server's port number to serverArray[numServers].port
 		 (iv) increment numServers
-****/
+****/	
+			
+			char *startOfName = strstr(recvBuffer, NIM_NAME);
+			if (startOfName != NULL)
+			{
+				serverArray[numServers].name = startOfName + strlen(NIM_NAME);
+				serverArray[numServers].host = host;
+				serverArray[numServers].port = port;
+				numServers++;
+			}
 
 			// Now, we'll see if there is another response.
 			status = wait(s,2,0);
