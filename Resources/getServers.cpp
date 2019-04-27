@@ -48,7 +48,7 @@ Task 4a: Add code here that will receive a response to the previous broadcast me
 		numBytesRecvd = UDP_recv(s, recvBuffer, MAX_RECV_BUFFER, host, port);
 
 		// Ignoring responses that were sent using the broadcastAddress.  We need specific IP Address
-		while (status > 0 && numBytesRecvd > 0 && strcmp(host,broadcastAddress) != 0) {
+		while (status > 0 && numBytesRecvd > 0 && strcmp(host, broadcastAddress) != 0) {
 /****			
 Task 4b: Inside this while loop, parse the response, which should be a C-string that looks like "Name=some server's name".
 		 If the response doesn't begin with the characters, "Name=", ignore it.

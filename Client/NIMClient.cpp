@@ -7,6 +7,10 @@
 
 int clientMain(int argc, char *argv[], std::string playerName)
 {
+	const char NIM_CONFIRM = "YES";
+	const char NIM_DECLINE = "NO";
+	const char NIM_CONFIRM_HANDSHAKE = "GREAT!";
+
 	char clientName[MAX_NAME];
 
 	std::cout << "What is your name? ";
@@ -19,7 +23,8 @@ int clientMain(int argc, char *argv[], std::string playerName)
 	char broadcastAddress[v4AddressSize];
 	char myIPAddress[v4AddressSize];
 	int status = getIPAddressInfo(myIPAddress, broadcastAddress);
-	if (status != 0) {
+	if (status != 0)
+	{
 		std::cerr << "No interface found that supports broadcasting." << std::endl;
 		return -1;
 	}
@@ -28,37 +33,50 @@ int clientMain(int argc, char *argv[], std::string playerName)
 	ServerStruct serverArray[MAX_SERVERS];
 	int numServers = getServers(s, broadcastAddress, NIM_UDPPORT, serverArray);
 
-	if (numServers == 0) {
+	if (numServers == 0)
+	{
 		std::cout << std::endl << "Sorry.  No NIM servers were found.  Try again later." << std::endl << std::endl;
-	} else {
+	}
+	else
+	{
 		// Display the list of NIM servers found
 		std::cout << std::endl << "Found NIM server";
-		if (numServers == 1) {
+		if (numServers == 1)
+		{
 			std::cout << ":" << "  " << serverArray[0].name << std::endl;
-		} else {
+		}
+		else
+		{
 			std::cout << "s:" << std::endl;
-			for (int i=0; i < numServers; i++) {
-				std::cout << "  " << i+1 << " - " << serverArray[i].name << std::endl;
-			}
-			std::cout << std::endl << "  " << numServers+1 << " - QUIT" << std::endl;
+			printServers(serverArray, numServers);
 		}
 		std::cout << std::endl;
 
 		// Allow user to select a NIM server to challenge to a game
 		int answer = 0;
 		std::string answerStr;
-		if (numServers == 1) {
+		if (numServers == 1)
+		{
 			std::cout << "Do you want to challenge " << serverArray[0].name << "? ";
 			std::getline(std::cin, answerStr);
-			if (answerStr[0] == 'y' || answerStr[0] == 'Y') answer = 1;
-		} else if (numServers > 1) {
+			if (answerStr[0] == 'y' || answerStr[0] == 'Y')
+			{
+				answer = 1;
+			}
+		}
+		else if (numServers > 1)
+		{
 			std::cout << "Who would you like to challenge (1-" << numServers+1 << ")? ";
 			std::getline(std::cin,answerStr);
 			answer = atoi(answerStr.c_str());
-			if (answer > numServers) answer = 0;
+			if (answer > numServers)
+			{
+				answer = 0;
+			}
 		}
 			
-		if (answer >= 1 && answer <= numServers) {
+		if (answer >= 1 && answer <= numServers)
+		{
 			// Extract the opponent's info from the server[] array
 			std::string serverName;
 			char host[v4AddressSize];
@@ -71,16 +89,68 @@ int clientMain(int argc, char *argv[], std::string playerName)
 			char buffer[MAX_SEND_BUFFER];
 			strcpy_s(buffer, NIM_CHALLENGE);
 			strcat_s(buffer, playerName.c_str());
-			int len = UDP_send(s, buffer, strlen(buffer)+1, host, port);
+			int len = UDP_send(s, buffer, strlen(buffer) + 1, host, port);
 			if (debug) {
 				std::cout << timestamp() << " - Sent: " << buffer << " to " << host << ":" << port << std::endl;
 			}
 
-			// Play the game.  You are the 'X' player
-			int winner = playNIM(s, serverName, host, port, PLAYER_X);
+			int status = wait(s, 10, 0);
+			
+			char recvBuffer[MAX_RECV_BUFFER];
+
+			int numberOfBytesReceived = UDP_recv(s, recvBuffer, MAX_RECV_BUFFER, host, port);
+
+			if (status > 0 && numberOfBytesReceived > 0 && stricmp(recvBuffer, NIM_CONFIRM) == 0)
+			{
+				strcpy_s(buffer, NIM_CONFIRM_HANDSHAKE);
+				int len = UDP_send(s, buffer, strlen(buffer) + 1, host, port);
+				if (debug) {
+					std::cout << timestamp() << " - Sent: " << buffer << " to " << host << ":" << port << std::endl;
+				}
+
+				// Play the game.  You are the 'X' player
+				int winner = playNIM(s, serverName, host, port, PLAYER_X);
+			}
+			else
+			{
+				std::cout << "Connection to " << host << ":" << port << " was refused." << std::endl;
+				std::cout << "Please select a different server to challenge, or quit:" << std::endl;
+
+				printServers(serverArray, numServers);
+
+				answer = 0;
+				std::string answerStr;
+				if (numServers == 1)
+				{
+					std::cout << "Do you want to challenge " << serverArray[0].name << "? ";
+					std::getline(std::cin, answerStr);
+					if (answerStr[0] == 'y' || answerStr[0] == 'Y')
+					{
+						answer = 1;
+					}
+				}
+				else if (numServers > 1)
+				{
+					std::cout << "Who would you like to challenge (1-" << numServers + 1 << ")? ";
+					std::getline(std::cin, answerStr);
+					answer = atoi(answerStr.c_str());
+					if (answer > numServers)
+					{
+						answer = 0;
+					}
+				}
+			}
 		}
 	}
 
 	closesocket(s);
 	return 0;
+}
+
+void printServers(ServerStruct serverArray[], int numberOfServers)
+{
+	for (int i = 0; i < numberOfServers; i++) {
+		std::cout << "  " << i + 1 << " - " << serverArray[i].name << std::endl;
+	}
+	std::cout << std::endl << "  " << numberOfServers + 1 << " - QUIT" << std::endl;
 }
