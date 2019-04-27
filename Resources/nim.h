@@ -1,4 +1,6 @@
 // nim.h    Header file for Nim project
+#pragma once
+
 #include <winsock2.h>
 #include <string>
 
