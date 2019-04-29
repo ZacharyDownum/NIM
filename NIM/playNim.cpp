@@ -8,7 +8,7 @@
 #include <string>
 
 
-int initializeBoard( char board[])
+int initializeBoard(char board[])
 {
 	int result = 0;
 	std::cout << "How many Piles do you want?" << std::endl;
@@ -39,7 +39,7 @@ int initializeBoard( char board[])
 	return result;
 }
 
-void updateBoard( char board[19], int move, int player)
+void updateBoard( char board[], int move, int player)
 {
 	if (move < 0 || move > 9) {
 		std::cout << "Problem with updateBoard function!" << std::endl;
@@ -56,7 +56,7 @@ void updateBoard( char board[19], int move, int player)
 	}
 }
 
-void displayBoard( char board[19] )
+void displayBoard(char board[])
 {
 	/*std::cout << std::endl;
 	std::cout << board[7] << " | " << board[8] << " | " << board[9] << std::endl;
@@ -65,14 +65,19 @@ void displayBoard( char board[19] )
 	std::cout << "__+___+__" << std::endl;
 	std::cout << board[1] << " | " << board[2] << " | " << board[3] << std::endl;
 	std::cout << std::endl;*/
-	for (int i = 0; i < numberOfPiles; i++)
+	for (int i = 0; i < strlen(board); i++)
 	{
-
+		int rocksInPile = board[i];
+		for (int i = 0; i < rocksInPile; i++)
+		{
+			std::cout << "*";
+		}
+		std::cout << endl;
 	}
 	
 }
 
-int check4Win(char board[10])
+int check4Win(char board[])
 {
 	int winner = noWinner;
 
@@ -119,7 +124,7 @@ int check4Win(char board[10])
 	return winner;
 }
 
-int getLocalUserMove(SOCKET s, char board[10], int player, std::string remoteIP, std::string remotePort)
+int getLocalUserMove(SOCKET s, char board[10], int player, std::string remoteIP, std::string remotePort) //unfinished
 {
 	int move;
 	char move_str[80];
@@ -129,20 +134,28 @@ int getLocalUserMove(SOCKET s, char board[10], int player, std::string remoteIP,
 	//char mark = (player == PLAYER_ONE) ? 'X' : 'O';
 	//std::cout << mark << "? " << std::endl;
 
-	if (move_str[0] == 'C')
+	while (move_str[0] == 'C' || move_str[0] == 'F')
 	{
-		for (int i = 1; i < strlen(move_str); i++) // takes off 'C' character
+		if (move_str[0] == 'C')
 		{
-			newMove_str[i - 1] = move_str[i];
+			for (int i = 1; i < strlen(move_str); i++) // takes off 'C' character
+			{
+				newMove_str[i - 1] = move_str[i];
+			}
+
+			UDP_send(s, move_str, strlen(move_str) + 1, remoteIP.c_str(), remotePort.c_str()); //displays comment to opponent
+
+			for (int i = 0; i < strlen(newMove_str); i++)// displays comment to user
+			{
+				std::cout << newMove_str[i];
+			}
+			cout << std::endl;
 		}
-
-		UDP_send(s, move_str, strlen(move_str) + 1, remoteIP.c_str(), remotePort.c_str()); //displays comment to opponent
-
-		for (int i = 0; i < strlen(newMove_str); i++)// displays comment to user
+		else if (move_str[0] == 'F')
 		{
-			std::cout << newMove_str[i];
+			bool forfeit = true;
+
 		}
-		cout << std::endl;
 	}
 
 	do {
@@ -194,10 +207,6 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 			displayBoard(board);
 
 			// Send move to opponent
-/****			
-	Task 1: "move" is an integer that was assigned a value (from 1 to 9) in the previous code segment.
-	         Add code here to convert "move" to a null-terminated C-string and send it to your opponent at remoteIP using remotePort.
-****/
             char moveString[MAX_SEND_BUFFER];
             _itoa_s(move, moveString, 10);
             UDP_send(s, moveString, strlen(moveString) + 1, remoteIP.c_str(), remotePort.c_str());
@@ -207,12 +216,7 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 			//Get opponent's move & display resulting board
 			int status = wait(s,WAIT_TIME,0);
 			if (status > 0) {
-/****			
-Task 2: (i) Insert code inside this IF statement that will accept a null-terminated C-string from your
-		opponent that represents their move.  Convert that string to an integer and then
-		(ii) call a function that will update the game board (see above) using your opponent's move, and
-		(iii) call a function that will display the updated board on your screen.
-****/       
+   
             char moveString[MAX_RECV_BUFFER];
             char host[v4AddressSize];
             char port[portNumberSize];
