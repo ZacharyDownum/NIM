@@ -8,11 +8,35 @@
 #include <string>
 
 
-void initializeBoard( char board[19], )
+int initializeBoard( char board[])
 {
-	char initBoard[10] = {'0','1','2','3','4','5','6','7','8','9'};
-	for (int i=0; i<10; i++)
-		board[i] = initBoard[i];
+	int result = 0;
+	std::cout << "How many Piles do you want?" << std::endl;
+	std::cin >> result;
+
+	while (result < 3 || result > 9)
+	{
+		std::cout << "Invalid Number of Piles. Enter new value in between 3 and 9." << endl;
+		std::cin >> result;
+	}
+
+	for (int i = 0; i < result; i++)
+	{
+		int numberOfRocks = 0;
+		std::cout << "Number of rocks in pile" << i + 1 << "?" << endl;
+		std::cin >> numberOfRocks;
+		while (numberOfRocks < 1 || numberOfRocks > 20)
+		{
+			std:: "Invalid Number of Rocks. Enter new value in between 1 and 20." << endl;
+			std::cin >> numberOfRocks;
+		}
+
+		char numberOfRocksString[1];
+		_itoa_s(numberOfRocks, numberOfRocksString, 10);
+		board[i] = numberOfRocksString;
+	}
+
+	return result;
 }
 
 void updateBoard( char board[19], int move, int player)
@@ -41,7 +65,10 @@ void displayBoard( char board[19] )
 	std::cout << "__+___+__" << std::endl;
 	std::cout << board[1] << " | " << board[2] << " | " << board[3] << std::endl;
 	std::cout << std::endl;*/
+	for (int i = 0; i < numberOfPiles; i++)
+	{
 
+	}
 	
 }
 
@@ -135,7 +162,7 @@ int getLocalUserMove(SOCKET s, char board[10], int player, std::string remoteIP,
 	return move;
 }
 
-int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::string remotePort, int localPlayer)
+int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string remotePort, int localPlayer)
 {
 	// This function plays the game and returns the value: winner.  This value 
 	// will be one of the following values: noWinner, xWinner, oWinner, TIE, ABORT
