@@ -4,6 +4,7 @@
 #include <winsock2.h>
 #include <string>
 
+#define debug true
 #define NIM_QUERY	"Who?"
 #define NIM_NAME	"Name="
 #define NIM_CHALLENGE	"Player="
@@ -17,6 +18,11 @@ const int MAX_SEND_BUFFER  = 2048;
 const int MAX_RECV_BUFFER  = 2048;
 const int MAX_SERVERS   = 100;
 const int MAX_NAME = 80;
+const int PLAYER_ONE = 1;
+const int PLAYER_TWO = 2;
+const char NIM_CONFIRM[] = "YES";
+const char NIM_DECLINE[] = "NO";
+const char NIM_CONFIRM_HANDSHAKE[] = "GREAT!";
 
 struct ServerStruct {
 	std::string name;
