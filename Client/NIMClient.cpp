@@ -7,10 +7,6 @@
 
 int clientMain(int argc, char *argv[], std::string playerName)
 {
-	const char NIM_CONFIRM = "YES";
-	const char NIM_DECLINE = "NO";
-	const char NIM_CONFIRM_HANDSHAKE = "GREAT!";
-
 	char clientName[MAX_NAME];
 
 	std::cout << "What is your name? ";
