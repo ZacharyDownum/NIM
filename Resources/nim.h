@@ -24,14 +24,16 @@ struct ServerStruct {
 	std::string port;
 };
 
-void playNim(SOCKET, bool, char*, bool, bool, char*, char*, bool);
-SOCKET connectsock (const char*, const char*, const char*);
-SOCKET passivesock (const char*, const char*);
-int UDP_recv (SOCKET, char*, int, char*, char*);
-int UDP_send (SOCKET, const char*, int, const char*, const char*);
-int wait(SOCKET, int, int);
+// TODO: Finalize the parameter list for playNim and update declaration
+void playNim(SOCKET s, bool, char*, bool, bool, char*, char*, bool);
+
+SOCKET connectsock (const char *host, const char *service, const char *protocol);
+SOCKET passivesock (const char *service, const char *protocol);
+int UDP_recv (SOCKET s, char *buf, int maxSize, char *remoteHost, char *remotePort);
+int UDP_send (SOCKET s, const char *buf, int numBytesToSend, const char *host, const char *service);
+int wait(SOCKET s, int seconds, int msec);
 char* timestamp();
-int getServers(SOCKET, char*, char*, ServerStruct[]);
-int serverMain(int, char*);
-int clientMain(int, char*);
-int getIPAddressInfo(char*, char*);
+int getServers(SOCKET s, const char *broadcastAddress, const char *remotePort, ServerStruct serverArray[]);
+int serverMain(int argc, char *argv[], std::string playerName);
+int clientMain(int argc, char *argv[], std::string playerName);
+int getIPAddressInfo(char *myIPAddress, char *myBroadcastAddress);
