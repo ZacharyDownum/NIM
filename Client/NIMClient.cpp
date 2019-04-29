@@ -1,4 +1,4 @@
-// clientMain.cpp
+// NIMClient.cpp
 //   This function serves as the "main" function for the client-side
 #include "nim.h"
 #include <iostream>
@@ -62,7 +62,7 @@ int clientMain(int argc, char *argv[], std::string playerName)
 		}
 		else if (numServers > 1)
 		{
-			std::cout << "Who would you like to challenge (1-" << numServers+1 << ")? ";
+			std::cout << "Who would you like to challenge (1-" << numServers + 1 << ")? ";
 			std::getline(std::cin,answerStr);
 			answer = atoi(answerStr.c_str());
 			if (answer > numServers)
@@ -71,15 +71,15 @@ int clientMain(int argc, char *argv[], std::string playerName)
 			}
 		}
 			
-		if (answer >= 1 && answer <= numServers)
+		while (answer >= 1 && answer <= numServers)
 		{
 			// Extract the opponent's info from the server[] array
 			std::string serverName;
 			char host[v4AddressSize];
 			char port[portNumberSize];
-			serverName = serverArray[answer-1].name;		// Adjust for 0-based array
-			strcpy_s(host,serverArray[answer-1].host.c_str());
-			strcpy_s(port,serverArray[answer-1].port.c_str());
+			serverName = serverArray[answer - 1].name;		// Adjust for 0-based array
+			strcpy_s(host, serverArray[answer - 1].host.c_str());
+			strcpy_s(port, serverArray[answer - 1].port.c_str());
 
 			// Append playerName to the NIM_CHALLENGE string & send a challenge to host:port
 			char buffer[MAX_SEND_BUFFER];
@@ -105,34 +105,53 @@ int clientMain(int argc, char *argv[], std::string playerName)
 				}
 
 				// Play the game.  You are the 'X' player
-				int winner = playNIM(s, serverName, host, port, PLAYER_X);
+				int winner = playNim(s, serverName, host, port, PLAYER_X);
 			}
 			else
 			{
 				std::cout << "Connection to " << host << ":" << port << " was refused." << std::endl;
 				std::cout << "Please select a different server to challenge, or quit:" << std::endl;
 
-				printServers(serverArray, numServers);
-
-				answer = 0;
-				std::string answerStr;
-				if (numServers == 1)
+				int numServers = getServers(s, broadcastAddress, NIM_UDPPORT, serverArray);
+				
+				if (numServers == 0)
 				{
-					std::cout << "Do you want to challenge " << serverArray[0].name << "? ";
-					std::getline(std::cin, answerStr);
-					if (answerStr[0] == 'y' || answerStr[0] == 'Y')
-					{
-						answer = 1;
-					}
+					std::cout << std::endl << "Sorry.  No NIM servers were found.  Try again later." << std::endl << std::endl;
 				}
-				else if (numServers > 1)
+				else
 				{
-					std::cout << "Who would you like to challenge (1-" << numServers + 1 << ")? ";
-					std::getline(std::cin, answerStr);
-					answer = atoi(answerStr.c_str());
-					if (answer > numServers)
+					std::cout << std::endl << "Found NIM server";
+					if (numServers == 1)
 					{
-						answer = 0;
+						std::cout << ":" << "  " << serverArray[0].name << std::endl;
+					}
+					else
+					{
+						std::cout << "s:" << std::endl;
+						printServers(serverArray, numServers);
+					}
+					std::cout << std::endl;
+
+					answer = 0;
+					std::string answerStr;
+					if (numServers == 1)
+					{
+						std::cout << "Do you want to challenge " << serverArray[0].name << "? ";
+						std::getline(std::cin, answerStr);
+						if (answerStr[0] == 'y' || answerStr[0] == 'Y')
+						{
+							answer = 1;
+						}
+					}
+					else if (numServers > 1)
+					{
+						std::cout << "Who would you like to challenge (1-" << numServers + 1 << ")? ";
+						std::getline(std::cin, answerStr);
+						answer = atoi(answerStr.c_str());
+						if (answer > numServers)
+						{
+							answer = 0;
+						}
 					}
 				}
 			}
