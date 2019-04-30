@@ -18,8 +18,8 @@ const int MAX_SEND_BUFFER  = 2048;
 const int MAX_RECV_BUFFER  = 2048;
 const int MAX_SERVERS   = 100;
 const int MAX_NAME = 80;
-const int PLAYER_ONE = 1;
-const int PLAYER_TWO = 2;
+const int PLAYER_SERVER = 1;
+const int PLAYER_CLIENT = 2;
 const char NIM_CONFIRM[] = "YES";
 const char NIM_DECLINE[] = "NO";
 const char NIM_CONFIRM_HANDSHAKE[] = "GREAT!";
@@ -31,7 +31,7 @@ struct ServerStruct {
 };
 
 // TODO: Finalize the parameter list for playNim and update declaration
-void playNim(SOCKET s, bool, char*, bool, bool, char*, char*, bool);
+void playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string remotePort, int localPlayer);
 
 SOCKET connectsock (const char *host, const char *service, const char *protocol);
 SOCKET passivesock (const char *service, const char *protocol);
