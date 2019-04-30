@@ -230,8 +230,8 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 		myMove = false;
 	}
 
-	initializeBoard(board);
-	displayBoard(board);
+	int pileCount = initializeBoard(board);
+	displayBoard(board, pileCount);
 
 	while (winner == noWinner) {
 		if (myMove) {
