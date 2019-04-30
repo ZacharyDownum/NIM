@@ -31,7 +31,7 @@ struct ServerStruct {
 };
 
 // TODO: Finalize the parameter list for playNim and update declaration
-void playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string remotePort, int localPlayer);
+int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string remotePort, int localPlayer);
 
 SOCKET connectsock (const char *host, const char *service, const char *protocol);
 SOCKET passivesock (const char *service, const char *protocol);
