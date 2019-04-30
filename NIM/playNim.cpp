@@ -210,6 +210,26 @@ int getLocalUserMove(SOCKET s, char board[10], int player, std::string remoteIP,
 	return move;
 }
 
+void sendBoard(std::string remoteIP, std::string remotePort, int board[], int pileCount) {
+
+	char moveString[MAX_SEND_BUFFER];
+
+	_itoa_s(pileCount, moveString, 10);
+
+	for (int i = 0; i < pileCount) {
+
+		if (i < 10) {
+
+			// Start single digit pile sizes with 0
+			_itoa_s(0, moveString, 10);
+		}
+
+		_itoa_s(move, moveString, 10);
+	}
+
+	UDP_send(s, moveString, strlen(moveString) + 1, remoteIP.c_str(), remotePort.c_str());
+}
+
 int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string remotePort, int localPlayer)
 {
 	// This function plays the game and returns the value: winner.  This value 
@@ -220,17 +240,22 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 	int move;
 	bool myMove;
 
-	if (localPlayer == PLAYER_ONE) {
-		std::cout << "Playing as Player One" << std::endl;
-		opponent = PLAYER_TWO;
-		myMove = true;
-	} else {
-		std::cout << "Playing as Player Two" << std::endl;
-		opponent = PLAYER_ONE;
+	int pileCount = 0;
+
+	if (localPlayer == PLAYER_SERVER) {
+
+		std::cout << "Playing as server" << std::endl;
+		opponent = PLAYER_CLIENT;
+		pileCount = initializeBoard(board);
+		sendBoard(remoteIP, remotePort, board, pileCount);
 		myMove = false;
+	} else {
+
+		std::cout << "Playing as client" << std::endl;
+		opponent = PLAYER_SERVER;
+		myMove = true;
 	}
 
-	int pileCount = initializeBoard(board);
 	displayBoard(board, pileCount);
 
 	while (winner == noWinner) {
