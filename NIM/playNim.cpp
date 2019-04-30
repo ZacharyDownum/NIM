@@ -93,13 +93,7 @@ void updateBoard( int board[], int move, int player)
 
 void displayBoard(int board[], int pileCount)
 {
-	/*std::cout << std::endl;
-	std::cout << board[7] << " | " << board[8] << " | " << board[9] << std::endl;
-	std::cout << "__+___+__" << std::endl;
-	std::cout << board[4] << " | " << board[5] << " | " << board[6] << std::endl;
-	std::cout << "__+___+__" << std::endl;
-	std::cout << board[1] << " | " << board[2] << " | " << board[3] << std::endl;
-	std::cout << std::endl;*/
+
 	for (int i = 0; i < pileCount; i++)
 	{
 		int rocksInPile = board[i];
@@ -115,42 +109,6 @@ void displayBoard(int board[], int pileCount)
 int check4Win(int board[])
 {
 	int winner = noWinner;
-
-	//// Check for vertical winners
-	//int i = 1;
-	//while (winner == noWinner && i < 4) {
-	//	if (board[i] == board[i+3] && board[i] == board[i+6]) {
-	//		winner = (board[i] == 'X') ? winnerIsX : winnerIsO;
-	//	}
-	//	i++;
-	//}
-
-	//// Check for horizontal winners
-	//i = 1;
-	//while (winner == noWinner && i < 8) {
-	//	if (board[i] == board[i+1] && board[i] == board[i+2]) {
-	//		winner = (board[i] == 'X') ? winnerIsX : winnerIsO;
-	//	}
-	//	i  += 3;
-	//}
-
-	//// Check for diagonal winners
-	//if (winner == noWinner) {
-	//	if ( (board[1] == board[5] && board[1] == board[9]) ||
-	//		 (board[3] == board[5] && board[3] == board[7]) ) {
-	//		winner = (board[5] == 'X') ? winnerIsX : winnerIsO;
-	//	}
-	//}
-
-	//// Check for tie
-	//i = 1;
-	//int numMoves = 0;
-	//while ( i < 10) {
-	//	if ( (board[i] == 'X' || board[i] == 'O') ) {
-	//		numMoves++;
-	//	}
-	//	i++;
-	//}
 
 	if (winner == noWinner && numMoves == 9)
 		winner = TIE;
