@@ -74,7 +74,7 @@ int initializeBoard(int board[])
 	return result;
 }
 
-void updateBoard( char board[], int move, int player)
+void updateBoard( int board[], int move, int player)
 {
 	if (move < 0 || move > 9) {
 		std::cout << "Problem with updateBoard function!" << std::endl;
@@ -112,7 +112,7 @@ void displayBoard(int board[], int pileCount)
 	
 }
 
-int check4Win(char board[])
+int check4Win(int board[])
 {
 	int winner = noWinner;
 
@@ -210,13 +210,13 @@ int getLocalUserMove(SOCKET s, char board[10], int player, std::string remoteIP,
 	return move;
 }
 
-void sendBoard(std::string remoteIP, std::string remotePort, int board[], int pileCount) {
+void sendBoard(SOCKET s, std::string remoteIP, std::string remotePort, int board[], int pileCount) {
 
 	char moveString[MAX_SEND_BUFFER];
 
 	_itoa_s(pileCount, moveString, 10);
 
-	for (int i = 0; i < pileCount) {
+	for (int i = 0; i < pileCount; i++) {
 
 		if (i < 10) {
 
@@ -247,7 +247,7 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 		std::cout << "Playing as server" << std::endl;
 		opponent = PLAYER_CLIENT;
 		pileCount = initializeBoard(board);
-		sendBoard(remoteIP, remotePort, board, pileCount);
+		sendBoard(s, remoteIP, remotePort, board, pileCount);
 		myMove = false;
 	} else {
 
@@ -264,7 +264,7 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 			move = getLocalUserMove(s, board, localPlayer, remoteIP, remotePort);
 			std::cout << "Board after your move:" << std::endl;
 			updateBoard(board,move,localPlayer);
-			displayBoard(board);
+			displayBoard(board, pileCount);
 
 			// Send move to opponent
             char moveString[MAX_SEND_BUFFER];
