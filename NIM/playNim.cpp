@@ -91,7 +91,7 @@ void updateBoard( char board[], int move, int player)
 	}
 }
 
-void displayBoard(char board[])
+void displayBoard(int board[], int pileCount)
 {
 	/*std::cout << std::endl;
 	std::cout << board[7] << " | " << board[8] << " | " << board[9] << std::endl;
@@ -100,7 +100,7 @@ void displayBoard(char board[])
 	std::cout << "__+___+__" << std::endl;
 	std::cout << board[1] << " | " << board[2] << " | " << board[3] << std::endl;
 	std::cout << std::endl;*/
-	for (int i = 0; i < strlen(board); i++)
+	for (int i = 0; i < pileCount; i++)
 	{
 		int rocksInPile = board[i];
 		for (int i = 0; i < rocksInPile; i++)
@@ -215,7 +215,7 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 	// This function plays the game and returns the value: winner.  This value 
 	// will be one of the following values: noWinner, xWinner, oWinner, TIE, ABORT
 	int winner = noWinner;
-	char board[10];
+	int board[10];
 	int opponent;
 	int move;
 	bool myMove;
