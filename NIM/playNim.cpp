@@ -118,17 +118,15 @@ int check4Win(int board[])
 	return winner;
 }
 
-int getLocalUserMove(SOCKET s, int board[10], int player, std::string remoteIP, std::string remotePort) //unfinished
+int getLocalUserMove(SOCKET s, int board[10], int player, std::string remoteIP, std::string remotePort) //unfinished -- forfeit currently unhandled
 {
 	int move;
 	char move_str[80];
 	char newMove_str[80];
 
 	std::cout << "Where do you want to place your rock?";
-	//char mark = (player == PLAYER_ONE) ? 'X' : 'O';
-	//std::cout << mark << "? " << std::endl;
 
-	while (move_str[0] == 'C' || move_str[0] == 'F')
+	while (move_str[0] == 'C')
 	{
 		if (move_str[0] == 'C')
 		{
@@ -145,26 +143,24 @@ int getLocalUserMove(SOCKET s, int board[10], int player, std::string remoteIP, 
 			}
 			cout << std::endl;
 		}
-		else if (move_str[0] == 'F')
-		{
-			bool forfeit = true;
-
-		}
 	}
 
-	do {
-		std::cout << "Your move? ";
-		std::cin >> move_str; //mnn
+	if (move_str[0] != 'F')
+	{
+		do {
+			std::cout << "Your move? ";
+			std::cin >> move_str; //mnn
 
-		move = atoi(move_str);
-		if (move[0] < 1 || move[0] > 9) std::cout << "Invalid move.  Try again." << std::endl;
-		else {
-			if (board[move] == 'X' || board[move] == 'O') {
-				move = 0;
-				std::cout << "I'm sorry, but that square is already occupied." << std::endl;
+			move = atoi(move_str);
+			if (move[0] < 1 || move[0] > 9) std::cout << "Invalid move.  Try again." << std::endl;
+			else {
+				if (board[move] == 'X' || board[move] == 'O') {
+					move = 0;
+					std::cout << "I'm sorry, but that square is already occupied." << std::endl;
+				}
 			}
-		}
-	} while (move[0] < 1 || move[0] > 9);
+		} while (move[0] < 1 || move[0] > 9);
+	}
 
 	return move;
 }
@@ -254,15 +250,12 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 			//Get opponent's move & display resulting board
 			int status = wait(s,WAIT_TIME,0);
 			if (status > 0) {
-   
-            char moveString[MAX_RECV_BUFFER];
-			char host[v4AddressSize];
-			char port[portNumberSize];
-            UDP_recv(s, moveString, MAX_RECV_BUFFER - 1, host, port);
-
-            
-
-			} else {
+				char moveString[MAX_RECV_BUFFER];
+				char host[v4AddressSize];
+				char port[portNumberSize];
+				UDP_recv(s, moveString, MAX_RECV_BUFFER - 1, host, port);
+			} 
+			else {
 				winner = ABORT;
 			}
 		}
