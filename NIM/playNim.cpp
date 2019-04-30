@@ -118,7 +118,7 @@ int check4Win(int board[])
 	return winner;
 }
 
-int getLocalUserMove(SOCKET s, char board[10], int player, std::string remoteIP, std::string remotePort) //unfinished
+int getLocalUserMove(SOCKET s, int board[10], int player, std::string remoteIP, std::string remotePort) //unfinished
 {
 	int move;
 	char move_str[80];
