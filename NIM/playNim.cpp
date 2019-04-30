@@ -8,6 +8,7 @@
 #include <string>
 #include <time.h>
 #include <cstdlib>
+#include <iomanip>
 
 using std::cout;
 using std::endl;
@@ -94,17 +95,23 @@ void updateBoard( int board[], int move, int player)
 
 void displayBoard(int board[], int pileCount)
 {
+	cout << "\n\nNim board:" << endl;
+	cout << std::setfill('-') << std::setw(80) << "-" << endl;
 
 	for (int i = 0; i < pileCount; i++)
 	{
 		int rocksInPile = board[i];
+
+		cout << "Rock Pile #" << i + 1 << " -> ";
+
 		for (int i = 0; i < rocksInPile; i++)
 		{
-			std::cout << "*";
+			std::cout << "* ";
 		}
 		std::cout << endl;
 	}
 
+	cout << std::setfill('-') << std::setw(80) << "-" << endl;
 }
 
 int check4Win(int board[])
