@@ -183,7 +183,7 @@ void sendBoard(SOCKET s, std::string remoteIP, std::string remotePort, int board
 			_itoa_s(0, moveString, 10);
 		}
 
-		_itoa_s(move, moveString, 10);
+		_itoa_s(board[i], moveString, 10);
 	}
 
 	UDP_send(s, moveString, strlen(moveString) + 1, remoteIP.c_str(), remotePort.c_str());
