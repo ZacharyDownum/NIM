@@ -233,6 +233,8 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 	int move;
 	bool myMove;
 
+	bool initializedBoard = false;
+
 	int pileCount = 0;
 
 	if (localPlayer == PLAYER_SERVER) {
@@ -241,61 +243,72 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 		opponent = PLAYER_CLIENT;
 		pileCount = initializeBoard(board);
 		sendBoard(s, remoteIP, remotePort, board, pileCount);
+		initializedBoard = true;
 		myMove = false;
 	} else {
 
 		std::cout << "Playing as client" << std::endl;
 		opponent = PLAYER_SERVER;
 
-		wait(s, 2, 0);
-		receiveBoard(s, board, pileCount);
+		int status = wait(s, 2, 0);
+
+		if (status > 0) {
+
+			initializedBoard = receiveBoard(s, board, pileCount);
+		}
 
 		myMove = true;
 	}
 
-	displayBoard(board, pileCount);
+	if (initializedBoard = true) {
 
-	while (winner == noWinner) {
-		if (myMove) {
-			// Get my move & display board
-			move = getLocalUserMove(s, board, localPlayer, remoteIP, remotePort);
-			std::cout << "Board after your move:" << std::endl;
-			updateBoard(board,move,localPlayer);
-			displayBoard(board, pileCount);
+		displayBoard(board, pileCount);
 
-			// Send move to opponent
-            char moveString[MAX_SEND_BUFFER];
-            _itoa_s(move, moveString, 10);
-            UDP_send(s, moveString, strlen(moveString) + 1, remoteIP.c_str(), remotePort.c_str());
+		while (winner == noWinner) {
+			if (myMove) {
+				// Get my move & display board
+				move = getLocalUserMove(s, board, localPlayer, remoteIP, remotePort);
+				std::cout << "Board after your move:" << std::endl;
+				updateBoard(board,move,localPlayer);
+				displayBoard(board, pileCount);
 
-		} else {
-			std::cout << "Waiting for your opponent's move..." << std::endl << std::endl;
-			//Get opponent's move & display resulting board
-			int status = wait(s,WAIT_TIME,0);
-			if (status > 0) {
-				char moveString[MAX_RECV_BUFFER];
-				char host[v4AddressSize];
-				char port[portNumberSize];
-				UDP_recv(s, moveString, MAX_RECV_BUFFER - 1, host, port);
-			} 
-			else {
-				winner = ABORT;
+				// Send move to opponent
+				char moveString[MAX_SEND_BUFFER];
+				_itoa_s(move, moveString, 10);
+				UDP_send(s, moveString, strlen(moveString) + 1, remoteIP.c_str(), remotePort.c_str());
+
+			} else {
+				std::cout << "Waiting for your opponent's move..." << std::endl << std::endl;
+				//Get opponent's move & display resulting board
+				int status = wait(s,WAIT_TIME,0);
+				if (status > 0) {
+					char moveString[MAX_RECV_BUFFER];
+					char host[v4AddressSize];
+					char port[portNumberSize];
+					UDP_recv(s, moveString, MAX_RECV_BUFFER - 1, host, port);
+				} 
+				else {
+					winner = ABORT;
+				}
 			}
-		}
-		myMove = !myMove;	// Switch whose move it is
+			myMove = !myMove;	// Switch whose move it is
 
-		if (winner == ABORT) {
-			std::cout << timestamp() << " - No response from opponent.  Aborting the game..." << std::endl;
-		} else {
-			winner = check4Win(board);
-		}
+			if (winner == ABORT) {
+				std::cout << timestamp() << " - No response from opponent.  Aborting the game..." << std::endl;
+			} else {
+				winner = check4Win(board);
+			}
 		
-		if (winner == localPlayer)
-			std::cout << "You WIN!" << std::endl;
-		else if (winner == TIE)
-			std::cout << "It's a tie." << std::endl;
-		else if (winner == opponent)
-			std::cout << "I'm sorry.  You lost" << std::endl;
+			if (winner == localPlayer)
+				std::cout << "You WIN!" << std::endl;
+			else if (winner == TIE)
+				std::cout << "It's a tie." << std::endl;
+			else if (winner == opponent)
+				std::cout << "I'm sorry.  You lost" << std::endl;
+		}
+	} else {
+
+		cout << "Failed to initialize the game board" << endl;
 	}
 
 	return winner;
