@@ -68,8 +68,8 @@ int serverMain(int argc, char *argv[], std::string playerName) {
 
 					if (confirmation != nullptr) {
 
-						// Play the game.  You are the player two
-						int winner = playNim(s, (char*)playerName.c_str(), host, port, PLAYER_TWO);
+						// Play the game.  You are the server
+						int winner = playNim(s, (char*)playerName.c_str(), host, port, PLAYER_SERVER);
 						finished = true;
 					}
 				} else {

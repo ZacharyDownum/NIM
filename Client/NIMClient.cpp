@@ -104,8 +104,8 @@ int clientMain(int argc, char *argv[], std::string playerName)
 					std::cout << timestamp() << " - Sent: " << buffer << " to " << host << ":" << port << std::endl;
 				}
 
-				// Play the game.  You are the 'X' player
-				int winner = playNim(s, serverName, host, port, PLAYER_X);
+				// Play the game.  You are the client
+				int winner = playNim(s, serverName, host, port, PLAYER_CLIENT);
 			}
 			else
 			{
