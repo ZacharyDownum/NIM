@@ -18,11 +18,15 @@ const int MAX_SEND_BUFFER  = 2048;
 const int MAX_RECV_BUFFER  = 2048;
 const int MAX_SERVERS   = 100;
 const int MAX_NAME = 80;
-const int PLAYER_SERVER = 1;
-const int PLAYER_CLIENT = 2;
+
 const char NIM_CONFIRM[] = "YES";
 const char NIM_DECLINE[] = "NO";
 const char NIM_CONFIRM_HANDSHAKE[] = "GREAT!";
+
+const int NO_WINNER = 0;
+const int PLAYER_SERVER = 1;
+const int PLAYER_CLIENT = 2;
+const int ABORT = 3;
 
 struct ServerStruct {
 	std::string name;
