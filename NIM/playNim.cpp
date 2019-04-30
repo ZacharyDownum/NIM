@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 #include <time.h>
+#include <cstdlib>
 
 using std::cout;
 using std::endl;
@@ -211,6 +212,25 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 		std::cout << "Playing as client" << std::endl;
 		opponent = PLAYER_SERVER;
+
+		wait(s, 2, 0);
+
+		char boardData[MAX_RECV_BUFFER];
+		char host[v4AddressSize];
+		char port[portNumberSize];
+		UDP_recv(s, boardData, MAX_RECV_BUFFER - 1, host, port);
+
+		pileCount = std::atoi((const char *)boardData[0]);
+
+		for (int i = 1; i < pileCount; i += 2) {
+
+			std::string move;
+			move += boardData[i];
+			move += boardData[i + 1];
+
+			board[i] = std::stoi(move.c_str(), 0, 10);
+		}
+
 		myMove = true;
 	}
 
@@ -236,8 +256,8 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 			if (status > 0) {
    
             char moveString[MAX_RECV_BUFFER];
-            char host[v4AddressSize];
-            char port[portNumberSize];
+			char host[v4AddressSize];
+			char port[portNumberSize];
             UDP_recv(s, moveString, MAX_RECV_BUFFER - 1, host, port);
 
             
