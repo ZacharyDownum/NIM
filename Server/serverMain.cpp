@@ -40,6 +40,8 @@ int serverMain(int argc, char *argv[], std::string playerName) {
 				std::cout << std::endl << "You have been challenged by " << startOfName + strlen(NIM_CHALLENGE) << std::endl;
 			}
 
+			std::cout << std::endl << "Do you accept the challenge?" << std::endl;
+
 			string response;
 			std::getline(std::cin, response);
 
