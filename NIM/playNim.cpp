@@ -171,22 +171,27 @@ int getLocalUserMove(SOCKET s, int board[10], int player, std::string remoteIP, 
 
 void sendBoard(SOCKET s, std::string remoteIP, std::string remotePort, int board[], int pileCount) {
 
-	char moveString[MAX_SEND_BUFFER];
+	char boardString[MAX_SEND_BUFFER];
 
-	_itoa_s(pileCount, moveString, 10);
+	strcpy_s(boardString, std::to_string(pileCount).c_str());
 
 	for (int i = 0; i < pileCount; i++) {
 
-		if (i < 10) {
+		if (board[i] < 10) {
 
 			// Start single digit pile sizes with 0
-			_itoa_s(0, moveString, 10);
+			strcat_s(boardString, std::to_string(0).c_str());
 		}
 
-		_itoa_s(board[i], moveString, 10);
+		strcat_s(boardString, std::to_string(board[i]).c_str());
 	}
 
-	UDP_send(s, moveString, strlen(moveString) + 1, remoteIP.c_str(), remotePort.c_str());
+	UDP_send(s, boardString, strlen(boardString) + 1, remoteIP.c_str(), remotePort.c_str());
+
+	if (debug) {
+
+		std::cout << timestamp() << " - Sent: " << boardString << " to " << remoteIP << ":" << remotePort << std::endl;
+	}
 }
 
 bool receivedBoard(SOCKET s, int board[], int &pileCount) {
