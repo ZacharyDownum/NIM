@@ -185,6 +185,44 @@ void sendBoard(SOCKET s, std::string remoteIP, std::string remotePort, int board
 	UDP_send(s, moveString, strlen(moveString) + 1, remoteIP.c_str(), remotePort.c_str());
 }
 
+bool receiveBoard(SOCKET s, int board[], int &pileCount) {
+
+	bool recievedBoardSuccessfully = false;
+
+	char boardData[MAX_RECV_BUFFER];
+	char host[v4AddressSize];
+	char port[portNumberSize];
+
+	int status = UDP_recv(s, boardData, MAX_RECV_BUFFER - 1, host, port);
+
+	if (status > 0) {
+
+		pileCount = std::atoi((const char*)boardData[0]);
+
+		if (pileCount >= 3 && pileCount <= 9) {
+
+			recievedBoardSuccessfully = true;
+
+			for (int i = 1; i < pileCount; i += 2) {
+
+				std::string move;
+				move += boardData[i];
+				move += boardData[i + 1];
+
+				board[i] = std::stoi(move.c_str(), 0, 10);
+
+				if (board[i] < 0 || board[i] > 20) {
+
+					recievedBoardSuccessfully = false;
+					break;
+				}
+			}
+		}
+	}
+
+	return recievedBoardSuccessfully;
+}
+
 int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string remotePort, int localPlayer)
 {
 	// This function plays the game and returns the value: winner.  This value 
@@ -210,22 +248,7 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 		opponent = PLAYER_SERVER;
 
 		wait(s, 2, 0);
-
-		char boardData[MAX_RECV_BUFFER];
-		char host[v4AddressSize];
-		char port[portNumberSize];
-		UDP_recv(s, boardData, MAX_RECV_BUFFER - 1, host, port);
-
-		pileCount = std::atoi((const char *)boardData[0]);
-
-		for (int i = 1; i < pileCount; i += 2) {
-
-			std::string move;
-			move += boardData[i];
-			move += boardData[i + 1];
-
-			board[i] = std::stoi(move.c_str(), 0, 10);
-		}
+		receiveBoard(s, board, pileCount);
 
 		myMove = true;
 	}
