@@ -8,6 +8,7 @@
 #include <string>
 #include <time.h>
 
+using std::endl;
 
 int initializeBoard(char board[])
 {
@@ -55,7 +56,7 @@ int initializeBoard(char board[])
 					std::cout << "Number of rocks in pile" << i + 1 << "?" << endl;
 					std::cin >> numberOfRocks;
 					while (numberOfRocks < 1 || numberOfRocks > 20) {
-						std:: "Invalid Number of Rocks. Enter new value in between 1 and 20." << endl;
+						std::cout << "Invalid Number of Rocks. Enter new value in between 1 and 20." << endl;
 						std::cin >> numberOfRocks;
 					}
 
