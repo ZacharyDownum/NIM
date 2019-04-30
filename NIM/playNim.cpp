@@ -8,6 +8,7 @@
 #include <string>
 #include <time.h>
 
+using std::cout;
 using std::endl;
 
 int initializeBoard(char board[])
