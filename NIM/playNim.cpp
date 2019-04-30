@@ -81,14 +81,14 @@ void updateBoard( int board[], int move, int player)
 		std::cout << "Problem with updateBoard function!" << std::endl;
 	}
 	else {
-		if (player == PLAYER_ONE) {
+		/*if (player == PLAYER_ONE) {
 			board[move] = 'X';
 		}
 		else if (player == PLAYER_TWO) {
 			board[move] = 'O';
 		}
 		else
-			std::cout << "Problem with updateBoard function!" << std::endl;
+			std::cout << "Problem with updateBoard function!" << std::endl;*/
 	}
 }
 
@@ -104,15 +104,12 @@ void displayBoard(int board[], int pileCount)
 		}
 		std::cout << endl;
 	}
-	
+
 }
 
 int check4Win(int board[])
 {
-	int winner = noWinner;
-
-	if (winner == noWinner && numMoves == 9)
-		winner = TIE;
+	int winner = NO_WINNER;
 	
 
 	return winner;
@@ -152,14 +149,14 @@ int getLocalUserMove(SOCKET s, int board[10], int player, std::string remoteIP, 
 			std::cin >> move_str; //mnn
 
 			move = atoi(move_str);
-			if (move[0] < 1 || move[0] > 9) std::cout << "Invalid move.  Try again." << std::endl;
+			if (move < 1 || move > 9) std::cout << "Invalid move.  Try again." << std::endl;
 			else {
 				if (board[move] == 'X' || board[move] == 'O') {
 					move = 0;
 					std::cout << "I'm sorry, but that square is already occupied." << std::endl;
 				}
 			}
-		} while (move[0] < 1 || move[0] > 9);
+		} while (move < 1 || move > 9);
 	}
 
 	return move;
@@ -227,7 +224,7 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 {
 	// This function plays the game and returns the value: winner.  This value 
 	// will be one of the following values: noWinner, xWinner, oWinner, TIE, ABORT
-	int winner = noWinner;
+	int winner = NO_WINNER;
 	int board[10];
 	int opponent;
 	int move;
@@ -264,7 +261,7 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 		displayBoard(board, pileCount);
 
-		while (winner == noWinner) {
+		while (winner == NO_WINNER) {
 			if (myMove) {
 				// Get my move & display board
 				move = getLocalUserMove(s, board, localPlayer, remoteIP, remotePort);
@@ -301,8 +298,6 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 		
 			if (winner == localPlayer)
 				std::cout << "You WIN!" << std::endl;
-			else if (winner == TIE)
-				std::cout << "It's a tie." << std::endl;
 			else if (winner == opponent)
 				std::cout << "I'm sorry.  You lost" << std::endl;
 		}
