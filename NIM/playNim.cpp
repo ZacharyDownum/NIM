@@ -11,7 +11,7 @@
 using std::cout;
 using std::endl;
 
-int initializeBoard(char board[])
+int initializeBoard(int board[])
 {
 	int result = 0;
 
@@ -61,9 +61,7 @@ int initializeBoard(char board[])
 						std::cin >> numberOfRocks;
 					}
 
-					char numberOfRocksString[1];
-					_itoa_s(numberOfRocks, numberOfRocksString, 10);
-					board[i] = numberOfRocksString;
+					board[i] = numberOfRocks;
 				}
 
 				break;
