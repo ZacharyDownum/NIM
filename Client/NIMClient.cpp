@@ -5,6 +5,8 @@
 #include <string>
 #include <WinSock2.h>
 
+void printServers(ServerStruct serverArray[], int numberOfServers);
+
 int clientMain(int argc, char *argv[], std::string playerName)
 {
 
