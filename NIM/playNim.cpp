@@ -185,7 +185,7 @@ void sendBoard(SOCKET s, std::string remoteIP, std::string remotePort, int board
 	UDP_send(s, moveString, strlen(moveString) + 1, remoteIP.c_str(), remotePort.c_str());
 }
 
-bool receiveBoard(SOCKET s, int board[], int &pileCount) {
+bool receivedBoard(SOCKET s, int board[], int &pileCount) {
 
 	bool recievedBoardSuccessfully = false;
 
@@ -254,7 +254,7 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 		if (status > 0) {
 
-			initializedBoard = receiveBoard(s, board, pileCount);
+			initializedBoard = receivedBoard(s, board, pileCount);
 		}
 
 		myMove = true;
