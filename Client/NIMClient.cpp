@@ -1,16 +1,12 @@
 // NIMClient.cpp
 //   This function serves as the "main" function for the client-side
-#include "nim.h"
+#include "../Resources/nim.h"
 #include <iostream>
 #include <string>
 #include <WinSock2.h>
 
 int clientMain(int argc, char *argv[], std::string playerName)
 {
-	char clientName[MAX_NAME];
-
-	std::cout << "What is your name? ";
-	std::getline(std::cin, clientName);
 
 	// Find all NIM servers on our subnet
 	SOCKET s = connectsock("","","udp");	// Create a UDP socket  (Don't need to designate a host or port for UDP)
