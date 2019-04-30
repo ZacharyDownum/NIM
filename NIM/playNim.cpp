@@ -2,39 +2,74 @@
 // This set of functions are used to actually play the game.
 // Play starts with the function: playTicTacToe() which is defined below
 
-#include "TicTacToe.h"
+#include "../Resources/nim.h"
 #include <WinSock2.h>
 #include <iostream>
 #include <string>
+#include <time.h>
 
 
 int initializeBoard(char board[])
 {
 	int result = 0;
-	std::cout << "How many Piles do you want?" << std::endl;
-	std::cin >> result;
 
-	while (result < 3 || result > 9)
-	{
-		std::cout << "Invalid Number of Piles. Enter new value in between 3 and 9." << endl;
-		std::cin >> result;
-	}
+	char choiceStr[80], newline;
+	int choice = 0;
 
-	for (int i = 0; i < result; i++)
-	{
-		int numberOfRocks = 0;
-		std::cout << "Number of rocks in pile" << i + 1 << "?" << endl;
-		std::cin >> numberOfRocks;
-		while (numberOfRocks < 1 || numberOfRocks > 20)
-		{
-			std:: "Invalid Number of Rocks. Enter new value in between 1 and 20." << endl;
-			std::cin >> numberOfRocks;
+	do {
+
+		std::cout << "Choose an option:" << std::endl;
+		std::cout << "   1 - Generate random piles" << std::endl;
+		std::cout << "   2 - Manually generate piles" << std::endl;
+		std::cout << "Enter 1 or 2: ";
+
+		std::cin >> choiceStr; std::cin.get(newline);
+		choice = atoi(choiceStr);
+
+		switch (choice) {
+
+			case 1:
+				
+				std::srand(time(0));
+
+				result = (rand() % 7) + 3;
+
+				for (int i = 0; i < result; i++) {
+
+					board[i] = (rand() % 20) + 1;
+				}
+
+				break;
+			case 2:
+				
+				std::cout << "How many Piles do you want?" << std::endl;
+				std::cin >> result;
+
+				while (result < 3 || result > 9) {
+					std::cout << "Invalid Number of Piles. Enter new value in between 3 and 9." << endl;
+					std::cin >> result;
+				}
+
+				for (int i = 0; i < result; i++) {
+					int numberOfRocks = 0;
+					std::cout << "Number of rocks in pile" << i + 1 << "?" << endl;
+					std::cin >> numberOfRocks;
+					while (numberOfRocks < 1 || numberOfRocks > 20) {
+						std:: "Invalid Number of Rocks. Enter new value in between 1 and 20." << endl;
+						std::cin >> numberOfRocks;
+					}
+
+					char numberOfRocksString[1];
+					_itoa_s(numberOfRocks, numberOfRocksString, 10);
+					board[i] = numberOfRocksString;
+				}
+
+				break;
+			default:
+				
+				std::cout << std::endl << "Please enter a digit between 1 and 2." << std::endl;
 		}
-
-		char numberOfRocksString[1];
-		_itoa_s(numberOfRocks, numberOfRocksString, 10);
-		board[i] = numberOfRocksString;
-	}
+	} while (choice != 1 && choice != 2);
 
 	return result;
 }
