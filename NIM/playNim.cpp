@@ -87,14 +87,27 @@ void displayBoard(int board[], int pileCount)
 	{
 		int rocksInPile = board[i];
 
-		cout << "Rock Pile #" << i + 1 << " -> ";
+		std::string pile = "Rock Pile #" + std::to_string(i + 1) + " ->";
 
 		for (int i = 0; i < rocksInPile; i++)
 		{
-			std::cout << "* ";
+			pile += " *";
 		}
+
+		std::string postMessage = "(";
+		postMessage += std::to_string(rocksInPile);
+		postMessage += ") ";
+
+		if (rocksInPile < 10) {
+
+			postMessage += " ";
+		}
+
+		postMessage += "<- Rock Pile #";
+		postMessage += std::to_string(i + 1);
+
 		// TODO: Output number of rocks in pile
-		std::cout << endl;
+		std::cout << std::setfill(' ') << std::setw(60) << std::left << pile << std::right << postMessage << endl;
 	}
 
 	cout << std::setfill('-') << std::setw(80) << "-" << endl;
