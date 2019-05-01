@@ -286,8 +286,8 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 				do {
 
-					cout << "Enter first letter of one of the following commands (C,F,H, or R)." << endl;
-					cout << "Command (Chat, Forfeit, Help, Remove-rocks)? ";
+					cout << "Enter first letter of one of the following commands (C, F, or R)." << endl;
+					cout << "Command (Chat, Forfeit, Remove-rocks)? ";
 					cin >> choice;
 
 					switch (choice) {
