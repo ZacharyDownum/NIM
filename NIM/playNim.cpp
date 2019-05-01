@@ -424,7 +424,6 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 					winner = ABORT;
 				}
 			}
-			myMove = !myMove;	// Switch whose move it is
 
 			if (winner == ABORT) {
 				std::cout << timestamp() << " - No response from opponent.  Aborting the game..." << std::endl;
@@ -465,6 +464,8 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 				std::cout << "You WIN!" << std::endl;
 			else if (winner == opponent)
 				std::cout << "I'm sorry.  You lost" << std::endl;
+
+			myMove = !myMove;	// Switch whose move it is
 		}
 	} else {
 
