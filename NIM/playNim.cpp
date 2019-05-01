@@ -370,11 +370,21 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 					char moveString[MAX_RECV_BUFFER];
 					char host[v4AddressSize];
 					char port[portNumberSize];
-					UDP_recv(s, moveString, MAX_RECV_BUFFER - 1, host, port);
+					int length = UDP_recv(s, moveString, MAX_RECV_BUFFER - 1, host, port);
 
 					if (debug) {
 
 						std::cout << timestamp() << " - Recieved: " << moveString << " from " << host << ":" << port << std::endl;
+					}
+
+					if (length > 0) {
+
+						if (moveString[0] == 'f' || moveString[0] == 'F') {
+
+							winner = REMOTE_FORFEIT;
+						}
+					} else {
+						winner = ABORT;
 					}
 				} 
 				else {
@@ -385,11 +395,14 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 			if (winner == ABORT) {
 				std::cout << timestamp() << " - No response from opponent.  Aborting the game..." << std::endl;
-			} else if (winner == FORFEIT) {
+			} else if (winner == LOCAL_FORFEIT) {
 
 				std::string forfeitString = "F";
 
 				UDP_send(s, forfeitString.c_str(), forfeitString.length() + 1, remoteIP.c_str(), remotePort.c_str());
+			} else if (winner == REMOTE_FORFEIT) {
+
+				cout << serverName << " has forfeited!  YOU WIN!!" << endl;
 			} else {
 				winner = check4Win(board);
 			}
