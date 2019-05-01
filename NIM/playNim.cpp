@@ -141,59 +141,41 @@ void sendChat(SOCKET s, std::string remoteIP, std::string remotePort) {
 	}
 }
 
-bool getLocalUserMove(SOCKET s, std::string remoteIP, std::string remotePort, int board[10], int pileCount, int &oSelectedPile, int &oRemovedRockCount) //unfinished -- forfeit currently unhandled
-{
-	char choice;
-	bool madeValidMove = false;
+void getLocalUserMove(SOCKET s, std::string remoteIP, std::string remotePort, int board[10], int pileCount, int &oSelectedPile, int &oRemovedRockCount) {
 
-	cout << "Your turn." << endl;
+	bool madeValidMove = false;
 
 	do {
 
-		cout << "Enter first letter of one of the following commands (C,F,H, or R)." << endl;
-		cout << "Command (Chat, Forfeit, Help, Remove-rocks)? ";
-		cin >> choice;
+		std::cout << "From which pile would you like to remove some rocks (1-" << pileCount << ")? ";
+		std::cin >> oSelectedPile; //mnn
 
-		if (choice == 'c' || choice == 'C') {
+		// Validate selected pile
+		if (oSelectedPile >= 1 || oSelectedPile <= pileCount) {
 
-			sendChat(s, remoteIP, remotePort);
-		} else if (choice == 'r' || choice == 'R') {
+			if (board[oSelectedPile - 1] > 0) {
 
-			do {
+				cout << "How many rocks would you like to remove from pile #" << oSelectedPile << " (1-" << board[oSelectedPile - 1] << ")? ";
 
-				std::cout << "From which pile would you like to remove some rocks (1-" << pileCount << ")? ";
-				std::cin >> oSelectedPile; //mnn
+				cin >> oRemovedRockCount;
 
-				// Validate selected pile
-				if (oSelectedPile >= 1 || oSelectedPile <= pileCount) {
+				// Validate selected rock count
+				if (oRemovedRockCount >= 1 || oRemovedRockCount <= board[oSelectedPile - 1]) {
 
-					if (board[oSelectedPile - 1] > 0) {
-
-						cout << "How many rocks would you like to remove from pile #" << oSelectedPile << " (1-" << board[oSelectedPile - 1] << ")? ";
-
-						cin >> oRemovedRockCount;
-
-						// Validate selected rock count
-						if (oRemovedRockCount >= 1 || oRemovedRockCount <= board[oSelectedPile - 1]) {
-
-							board[oSelectedPile - 1] -= oRemovedRockCount;
-							madeValidMove = true;
-						} else {
-							cout << "You can't remove " << oRemovedRockCount << " rocks from pile #" << oSelectedPile << "!" << endl;
-						}
-					} else {
-
-						cout << "There are no rocks in pile #" << oSelectedPile << "!  Please try again." << endl;
-					}
+					board[oSelectedPile - 1] -= oRemovedRockCount;
+					madeValidMove = true;
 				} else {
-
-					std::cout << "Invalid move.  Try again." << std::endl;
+					cout << "You can't remove " << oRemovedRockCount << " rocks from pile #" << oSelectedPile << "!" << endl;
 				}
-			} while (madeValidMove == false);
+			} else {
+
+				cout << "There are no rocks in pile #" << oSelectedPile << "!  Please try again." << endl;
+			}
+		} else {
+
+			std::cout << "Invalid move.  Try again." << std::endl;
 		}
 	} while (madeValidMove == false);
-
-	return madeValidMove;
 }
 
 void sendBoard(SOCKET s, std::string remoteIP, std::string remotePort, int board[], int pileCount) {
@@ -305,7 +287,7 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 		myMove = true;
 	}
 
-	if (initializedBoard = true) {
+	if (initializedBoard == true) {
 
 		displayBoard(board, pileCount);
 
@@ -314,8 +296,32 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 				int selectedPile, removedRocks;
 
-				// Get my move & display board
-				bool madeMove = getLocalUserMove(s, remoteIP, remotePort, board, pileCount, selectedPile, removedRocks);
+				char choice;
+				bool madeMove = false;
+
+				cout << "Your turn." << endl;
+
+				do {
+
+					cout << "Enter first letter of one of the following commands (C,F,H, or R)." << endl;
+					cout << "Command (Chat, Forfeit, Help, Remove-rocks)? ";
+					cin >> choice;
+
+					switch (choice) {
+
+						case 'c':
+						case 'C':
+
+							sendChat(s, remoteIP, remotePort);
+							break;
+						case 'r':
+						case 'R':
+
+							getLocalUserMove(s, remoteIP, remotePort, board, pileCount, selectedPile, removedRocks);
+							madeMove = true;
+							break;
+					}
+				} while (madeMove == false);
 
 				if (madeMove) {
 
