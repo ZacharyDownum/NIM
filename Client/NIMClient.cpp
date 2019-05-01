@@ -94,6 +94,11 @@ int clientMain(int argc, char *argv[], std::string playerName)
 
 			int numberOfBytesReceived = UDP_recv(s, recvBuffer, MAX_RECV_BUFFER, host, port);
 
+			if (debug) {
+
+				std::cout << timestamp() << " - Recieved: " << recvBuffer << " from " << host << ":" << port << std::endl;
+			}
+
 			if (status > 0 && numberOfBytesReceived > 0 && _stricmp(recvBuffer, NIM_CONFIRM) == 0)
 			{
 				strcpy_s(buffer, NIM_CONFIRM_HANDSHAKE);

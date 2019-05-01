@@ -295,6 +295,10 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 				_itoa_s(move, moveString, 10);
 				UDP_send(s, moveString, strlen(moveString) + 1, remoteIP.c_str(), remotePort.c_str());
 
+				if (debug) {
+
+					std::cout << timestamp() << " - Sent: " << moveString << " to " << remoteIP << ":" << remotePort << std::endl;
+				}
 			} else {
 				std::cout << "Waiting for your opponent's move..." << std::endl << std::endl;
 				//Get opponent's move & display resulting board
@@ -304,6 +308,11 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 					char host[v4AddressSize];
 					char port[portNumberSize];
 					UDP_recv(s, moveString, MAX_RECV_BUFFER - 1, host, port);
+
+					if (debug) {
+
+						std::cout << timestamp() << " - Recieved: " << moveString << " from " << host << ":" << port << std::endl;
+					}
 				} 
 				else {
 					winner = ABORT;
