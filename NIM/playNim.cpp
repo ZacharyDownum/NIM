@@ -398,6 +398,9 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 							} else {
 
 								board[pile - 1] -= removedRocks;
+
+								cout << endl << serverName << " removed " << removedRocks << " rocks from pile #" << pile << endl << endl;
+
 								displayBoard(board, pileCount);
 							}
 						} else if (moveString[0] == 'f' || moveString[0] == 'F') {
