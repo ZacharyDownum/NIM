@@ -109,6 +109,7 @@ int clientMain(int argc, char *argv[], std::string playerName)
 
 				// Play the game.  You are the client
 				int winner = playNim(s, serverName, host, port, PLAYER_CLIENT);
+				break;
 			}
 			else
 			{
