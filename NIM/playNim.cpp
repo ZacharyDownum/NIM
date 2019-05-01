@@ -379,7 +379,16 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 					if (length > 0) {
 
-						if (moveString[0] == 'f' || moveString[0] == 'F') {
+						moveString[length] = '\n';
+
+						if (moveString[0] == 'c' || moveString[0] == 'C') {
+
+							std::string message = moveString;
+
+							message = message.substr(1, message.length() - 1);
+
+							cout << message << endl;
+						} else if (moveString[0] == 'f' || moveString[0] == 'F') {
 
 							winner = REMOTE_FORFEIT;
 						}
