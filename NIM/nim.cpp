@@ -1,4 +1,4 @@
-#include "nim.h"
+#include "../Resources/nim.h"
 #include <iostream>
 #include <string>
 #include <WinSock2.h>
