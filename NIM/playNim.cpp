@@ -129,15 +129,21 @@ void sendChat(SOCKET s, std::string remoteIP, std::string remotePort) {
 
 	cout << "Comment? ";
 
-	// Used twice to avoid the return from the previous stream extraction
-	std::getline(cin, message);
-	std::getline(cin, message);
+	do {
+
+		std::getline(cin, message);
+	} while (message.length() == 0);
 
 	if (message.length() > 0) {
 
 		std::string sendBuffer = "C" + message;
 
 		UDP_send(s, sendBuffer.c_str(), sendBuffer.length() + 1, remoteIP.c_str(), remotePort.c_str()); //displays comment to opponent
+
+		if (debug) {
+
+			std::cout << timestamp() << " - Sent: " << sendBuffer << " to " << remoteIP << ":" << remotePort << std::endl;
+		}
 	}
 }
 
@@ -387,7 +393,8 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 							message = message.substr(1, message.length() - 1);
 
-							cout << message << endl;
+							cout << "\n(CHAT MESSAGE from " << serverName << "):" << endl;
+							cout << "   " << message << endl;
 						} else if (moveString[0] == 'f' || moveString[0] == 'F') {
 
 							winner = REMOTE_FORFEIT;
