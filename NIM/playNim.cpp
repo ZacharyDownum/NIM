@@ -298,6 +298,7 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 				char choice;
 				bool madeMove = false;
+				bool forfeited = false;
 
 				cout << "Your turn." << endl;
 
@@ -320,8 +321,22 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 							getLocalUserMove(s, remoteIP, remotePort, board, pileCount, selectedPile, removedRocks);
 							madeMove = true;
 							break;
+						case 'f':
+						case 'F':
+
+							cout << "Do you want to forfeit this game (Y/N)? ";
+
+							cin >> choice;
+
+							if (choice == 'y' || choice == 'Y') {
+
+								forfeited = true;
+							}
+
+							winner = LOCAL_FORFEIT;
+							break;
 					}
-				} while (madeMove == false);
+				} while (!madeMove && !forfeited);
 
 				if (madeMove) {
 
@@ -370,6 +385,11 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 			if (winner == ABORT) {
 				std::cout << timestamp() << " - No response from opponent.  Aborting the game..." << std::endl;
+			} else if (winner == FORFEIT) {
+
+				std::string forfeitString = "F";
+
+				UDP_send(s, forfeitString.c_str(), forfeitString.length() + 1, remoteIP.c_str(), remotePort.c_str());
 			} else {
 				winner = check4Win(board);
 			}

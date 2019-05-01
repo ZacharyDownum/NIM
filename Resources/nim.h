@@ -26,7 +26,9 @@ const char NIM_CONFIRM_HANDSHAKE[] = "GREAT!";
 const int NO_WINNER = 0;
 const int PLAYER_SERVER = 1;
 const int PLAYER_CLIENT = 2;
-const int ABORT = 3;
+const int LOCAL_FORFEIT = 3;
+const int REMOTE_FORFEIT = 4;
+const int ABORT = 5;
 
 struct ServerStruct {
 	std::string name;
