@@ -72,7 +72,18 @@ int serverMain(int argc, char *argv[], std::string playerName) {
 
 						// Play the game.  You are the server
 						int winner = playNim(s, (char*)playerName.c_str(), host, port, PLAYER_SERVER);
-						finished = true;
+
+						std::cout << "Want to host another game? ";
+						char response;
+						std::cin >> response;
+
+						if (response != 'y' && response != 'Y') {
+
+							finished = true;
+						} else {
+
+							std::cout << "\nWaiting for a challenge..." << std::endl;
+						}
 					}
 				} else {
 
