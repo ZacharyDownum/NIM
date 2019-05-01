@@ -156,11 +156,12 @@ void getLocalUserMove(SOCKET s, std::string remoteIP, std::string remotePort, in
 				cin >> oRemovedRockCount;
 
 				// Validate selected rock count
-				if (oRemovedRockCount >= 1 || oRemovedRockCount <= board[oSelectedPile - 1]) {
+				if (oRemovedRockCount >= 1 && oRemovedRockCount <= board[oSelectedPile - 1]) {
 
 					board[oSelectedPile - 1] -= oRemovedRockCount;
 					madeValidMove = true;
 				} else {
+
 					cout << "You can't remove " << oRemovedRockCount << " rocks from pile #" << oSelectedPile << "!" << endl;
 				}
 			} else {
