@@ -11,6 +11,7 @@
 #include <iomanip>
 
 using std::cout;
+using std::cin;
 using std::endl;
 
 int initializeBoard(int board[])
@@ -122,51 +123,68 @@ int check4Win(int board[])
 	return winner;
 }
 
-int getLocalUserMove(SOCKET s, int board[10], int player, std::string remoteIP, std::string remotePort) //unfinished -- forfeit currently unhandled
+bool getLocalUserMove(SOCKET s, std::string remoteIP, std::string remotePort, int board[10], int pileCount, int &oSelectedPile, int &oRemovedRockCount) //unfinished -- forfeit currently unhandled
 {
-	int move;
 	char move_str[80];
 	char newMove_str[80];
+	bool madeValidMove = false;
 
-	std::cout << "Where do you want to place your rock?";
+	cout << "Your turn." << endl;
+	cout << "Enter first letter of one of the following commands (C,F,H, or R)." << endl;
+	cout << "Command (Chat, Forfeit, Help, Remove-rocks)?" << endl;
 
-	while (move_str[0] == 'C')
-	{
-		if (move_str[0] == 'C')
+	if (move_str[0] == 'C') {
+
+		for (int i = 1; i < strlen(move_str); i++) // takes off 'C' character
 		{
-			for (int i = 1; i < strlen(move_str); i++) // takes off 'C' character
-			{
-				newMove_str[i - 1] = move_str[i];
-			}
-
-			UDP_send(s, move_str, strlen(move_str) + 1, remoteIP.c_str(), remotePort.c_str()); //displays comment to opponent
-
-			for (int i = 0; i < strlen(newMove_str); i++)// displays comment to user
-			{
-				std::cout << newMove_str[i];
-			}
-			cout << std::endl;
+			newMove_str[i - 1] = move_str[i];
 		}
-	}
 
-	if (move_str[0] != 'F')
-	{
+		UDP_send(s, move_str, strlen(move_str) + 1, remoteIP.c_str(), remotePort.c_str()); //displays comment to opponent
+
+		for (int i = 0; i < strlen(newMove_str); i++)// displays comment to user
+		{
+			std::cout << newMove_str[i];
+		}
+		cout << std::endl;
+	} else if (move_str[0] == 'R') {
+
 		do {
-			std::cout << "Your move? ";
+
+			std::cout << "From which pile would you like to remove some rocks (1-" << pileCount << ")? ";
 			std::cin >> move_str; //mnn
 
-			move = atoi(move_str);
-			if (move < 1 || move > 9) std::cout << "Invalid move.  Try again." << std::endl;
-			else {
-				if (board[move] == 'X' || board[move] == 'O') {
-					move = 0;
-					std::cout << "I'm sorry, but that square is already occupied." << std::endl;
+			oSelectedPile = atoi(move_str);
+
+			// Validate selected pile
+			if (oSelectedPile >= 1 || oSelectedPile <= pileCount) {
+
+				if (board[oSelectedPile - 1] > 0) {
+
+					cout << "How many rocks would you like to remove from pile #" << oSelectedPile << " (1-" << board[oSelectedPile - 1] << ")? ";
+
+					cin >> oRemovedRockCount;
+
+					// Validate selected rock count
+					if (oRemovedRockCount >= 1 || oRemovedRockCount <= board[oSelectedPile - 1]) {
+
+						board[oSelectedPile - 1] -= oRemovedRockCount;
+						madeValidMove = true;
+					} else {
+						cout << "You can't remove " << oRemovedRockCount << " rocks from pile #" << oSelectedPile << "!" << endl;
+					}
+				} else {
+
+					cout << "There are no rocks in pile #" << oSelectedPile << "!  Please try again." << endl;
 				}
+			} else {
+
+				std::cout << "Invalid move.  Try again." << std::endl;
 			}
-		} while (move < 1 || move > 9);
+		} while (madeValidMove == false);
 	}
 
-	return move;
+	return madeValidMove;
 }
 
 void sendBoard(SOCKET s, std::string remoteIP, std::string remotePort, int board[], int pileCount) {
