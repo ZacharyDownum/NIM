@@ -198,33 +198,42 @@ bool receivedBoard(SOCKET s, int board[], int &pileCount) {
 
 	bool recievedBoardSuccessfully = false;
 
-	char boardData[MAX_RECV_BUFFER];
+	char recvBuffer[MAX_RECV_BUFFER];
 	char host[v4AddressSize];
 	char port[portNumberSize];
 
-	int status = UDP_recv(s, boardData, MAX_RECV_BUFFER - 1, host, port);
+	int length = UDP_recv(s, recvBuffer, MAX_RECV_BUFFER - 1, host, port);
 
-	if (status > 0) {
+	if (debug) {
 
-		pileCount = std::atoi((const char*)boardData[0]);
+		std::cout << timestamp() << " - Recieved: " << recvBuffer << " from " << host << ":" << port << std::endl;
+	}
 
-		if (pileCount >= 3 && pileCount <= 9) {
+	if (length > 0) {
+
+		pileCount = recvBuffer[0] - '0';
+
+		if (pileCount >= 3 && pileCount <= 9 && length >= pileCount * 2 + 1) {
 
 			recievedBoardSuccessfully = true;
 
-			for (int i = 1; i < pileCount; i += 2) {
+			int currentPile = 0;
+
+			for (int i = 1; i < pileCount * 2 + 1; i += 2) {
 
 				std::string move;
-				move += boardData[i];
-				move += boardData[i + 1];
+				move += recvBuffer[i];
+				move += recvBuffer[i + 1];
 
-				board[i] = std::stoi(move.c_str(), 0, 10);
+				board[currentPile] = std::stoi(move.c_str(), 0, 10);
 
-				if (board[i] < 0 || board[i] > 20) {
+				if (board[currentPile] < 1 || board[currentPile] > 20) {
 
 					recievedBoardSuccessfully = false;
 					break;
 				}
+
+				currentPile++;
 			}
 		}
 	}
