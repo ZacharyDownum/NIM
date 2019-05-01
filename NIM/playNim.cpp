@@ -125,64 +125,68 @@ int check4Win(int board[])
 
 bool getLocalUserMove(SOCKET s, std::string remoteIP, std::string remotePort, int board[10], int pileCount, int &oSelectedPile, int &oRemovedRockCount) //unfinished -- forfeit currently unhandled
 {
-	char move_str[80];
-	char newMove_str[80];
+	char choice;
 	bool madeValidMove = false;
 
 	cout << "Your turn." << endl;
-	cout << "Enter first letter of one of the following commands (C,F,H, or R)." << endl;
-	cout << "Command (Chat, Forfeit, Help, Remove-rocks)?" << endl;
 
-	if (move_str[0] == 'C') {
+	do {
 
-		for (int i = 1; i < strlen(move_str); i++) // takes off 'C' character
-		{
-			newMove_str[i - 1] = move_str[i];
-		}
+		cout << "Enter first letter of one of the following commands (C,F,H, or R)." << endl;
+		cout << "Command (Chat, Forfeit, Help, Remove-rocks)? ";
+		cin >> choice;
 
-		UDP_send(s, move_str, strlen(move_str) + 1, remoteIP.c_str(), remotePort.c_str()); //displays comment to opponent
+		if (choice == 'c' || choice == 'C') {
 
-		for (int i = 0; i < strlen(newMove_str); i++)// displays comment to user
-		{
-			std::cout << newMove_str[i];
-		}
-		cout << std::endl;
-	} else if (move_str[0] == 'R') {
+			std::string message;
 
-		do {
+			cout << "Comment? ";
 
-			std::cout << "From which pile would you like to remove some rocks (1-" << pileCount << ")? ";
-			std::cin >> move_str; //mnn
+			// Used twice to avoid the return from the previous stream extraction
+			std::getline(cin, message);
+			std::getline(cin, message);
 
-			oSelectedPile = atoi(move_str);
+			if (message.length() > 0) {
 
-			// Validate selected pile
-			if (oSelectedPile >= 1 || oSelectedPile <= pileCount) {
+				std::string sendBuffer = "C" + message;
 
-				if (board[oSelectedPile - 1] > 0) {
+				UDP_send(s, sendBuffer.c_str(), sendBuffer.length() + 1, remoteIP.c_str(), remotePort.c_str()); //displays comment to opponent
+			}
+		} else if (choice == 'r' || choice == 'R') {
 
-					cout << "How many rocks would you like to remove from pile #" << oSelectedPile << " (1-" << board[oSelectedPile - 1] << ")? ";
+			do {
 
-					cin >> oRemovedRockCount;
+				std::cout << "From which pile would you like to remove some rocks (1-" << pileCount << ")? ";
+				std::cin >> oSelectedPile; //mnn
 
-					// Validate selected rock count
-					if (oRemovedRockCount >= 1 || oRemovedRockCount <= board[oSelectedPile - 1]) {
+				// Validate selected pile
+				if (oSelectedPile >= 1 || oSelectedPile <= pileCount) {
 
-						board[oSelectedPile - 1] -= oRemovedRockCount;
-						madeValidMove = true;
+					if (board[oSelectedPile - 1] > 0) {
+
+						cout << "How many rocks would you like to remove from pile #" << oSelectedPile << " (1-" << board[oSelectedPile - 1] << ")? ";
+
+						cin >> oRemovedRockCount;
+
+						// Validate selected rock count
+						if (oRemovedRockCount >= 1 || oRemovedRockCount <= board[oSelectedPile - 1]) {
+
+							board[oSelectedPile - 1] -= oRemovedRockCount;
+							madeValidMove = true;
+						} else {
+							cout << "You can't remove " << oRemovedRockCount << " rocks from pile #" << oSelectedPile << "!" << endl;
+						}
 					} else {
-						cout << "You can't remove " << oRemovedRockCount << " rocks from pile #" << oSelectedPile << "!" << endl;
+
+						cout << "There are no rocks in pile #" << oSelectedPile << "!  Please try again." << endl;
 					}
 				} else {
 
-					cout << "There are no rocks in pile #" << oSelectedPile << "!  Please try again." << endl;
+					std::cout << "Invalid move.  Try again." << std::endl;
 				}
-			} else {
-
-				std::cout << "Invalid move.  Try again." << std::endl;
-			}
-		} while (madeValidMove == false);
-	}
+			} while (madeValidMove == false);
+		}
+	} while (madeValidMove == false);
 
 	return madeValidMove;
 }
