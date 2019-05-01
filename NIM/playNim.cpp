@@ -36,7 +36,7 @@ int initializeBoard(int board[])
 
 			case 1:
 				
-				std::srand(time(0));
+				std::srand((unsigned int) time(0));
 
 				result = (rand() % 7) + 3;
 
@@ -78,23 +78,6 @@ int initializeBoard(int board[])
 	return result;
 }
 
-void updateBoard( int board[], int move, int player)
-{
-	if (move < 0 || move > 9) {
-		std::cout << "Problem with updateBoard function!" << std::endl;
-	}
-	else {
-		/*if (player == PLAYER_ONE) {
-			board[move] = 'X';
-		}
-		else if (player == PLAYER_TWO) {
-			board[move] = 'O';
-		}
-		else
-			std::cout << "Problem with updateBoard function!" << std::endl;*/
-	}
-}
-
 void displayBoard(int board[], int pileCount)
 {
 	cout << "\n\nNim board:" << endl;
@@ -110,18 +93,11 @@ void displayBoard(int board[], int pileCount)
 		{
 			std::cout << "* ";
 		}
+		// TODO: Output number of rocks in pile
 		std::cout << endl;
 	}
 
 	cout << std::setfill('-') << std::setw(80) << "-" << endl;
-}
-
-int check4Win(int board[])
-{
-	int winner = NO_WINNER;
-	
-
-	return winner;
 }
 
 void sendChat(SOCKET s, std::string remoteIP, std::string remotePort) {
@@ -139,7 +115,7 @@ void sendChat(SOCKET s, std::string remoteIP, std::string remotePort) {
 
 		std::string sendBuffer = "C" + message;
 
-		UDP_send(s, sendBuffer.c_str(), sendBuffer.length() + 1, remoteIP.c_str(), remotePort.c_str()); //displays comment to opponent
+		UDP_send(s, sendBuffer.c_str(), (int) (sendBuffer.length() + 1), remoteIP.c_str(), remotePort.c_str()); //displays comment to opponent
 
 		if (debug) {
 
@@ -202,7 +178,7 @@ void sendBoard(SOCKET s, std::string remoteIP, std::string remotePort, int board
 		strcat_s(boardString, std::to_string(board[i]).c_str());
 	}
 
-	UDP_send(s, boardString, strlen(boardString) + 1, remoteIP.c_str(), remotePort.c_str());
+	UDP_send(s, boardString, (int) strlen(boardString) + 1, remoteIP.c_str(), remotePort.c_str());
 
 	if (debug) {
 
@@ -264,7 +240,6 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 	int winner = NO_WINNER;
 	int board[10];
 	int opponent;
-	int move;
 	bool myMove;
 
 	bool initializedBoard = false;
@@ -348,7 +323,6 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 				if (madeMove) {
 
 					std::cout << "Board after your move:" << std::endl;
-					//updateBoard(board,move,localPlayer);
 					displayBoard(board, pileCount);
 
 					// Send move to opponent
@@ -362,7 +336,7 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 					strcat_s(moveString, std::to_string(removedRocks).c_str());
 
-					UDP_send(s, moveString, strlen(moveString) + 1, remoteIP.c_str(), remotePort.c_str());
+					UDP_send(s, moveString, (int) strlen(moveString) + 1, remoteIP.c_str(), remotePort.c_str());
 
 					if (debug) {
 
@@ -431,7 +405,7 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 				std::string forfeitString = "F";
 
-				UDP_send(s, forfeitString.c_str(), forfeitString.length() + 1, remoteIP.c_str(), remotePort.c_str());
+				UDP_send(s, forfeitString.c_str(), (int) (forfeitString.length() + 1), remoteIP.c_str(), remotePort.c_str());
 			} else if (winner == REMOTE_FORFEIT) {
 
 				cout << serverName << " has forfeited!  YOU WIN!!" << endl;
