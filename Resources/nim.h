@@ -29,6 +29,7 @@ const int PLAYER_CLIENT = 2;
 const int LOCAL_FORFEIT = 3;
 const int REMOTE_FORFEIT = 4;
 const int ABORT = 5;
+const int DEFAULT_WIN = 6;
 
 struct ServerStruct {
 	std::string name;

@@ -9,6 +9,7 @@
 #include <time.h>
 #include <cstdlib>
 #include <iomanip>
+#include <cctype>
 
 using std::cout;
 using std::cin;
@@ -395,6 +396,22 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 							cout << "\n(CHAT MESSAGE from " << serverName << "):" << endl;
 							cout << "   " << message << endl;
+						} else if (std::isdigit(moveString[0])) {
+
+							std::string move = moveString;
+
+							int pile = move[0] - '0';
+							int removedRocks = std::stoi(move.substr(1, move.length() - 1));
+
+							if (pile < 1 || pile > pileCount || removedRocks < 1 || removedRocks > board[pile - 1]) {
+
+								cout << "Opponent entered an invalid move. You win by default!" << endl;
+								winner = DEFAULT_WIN;
+							} else {
+
+								board[pile - 1] -= removedRocks;
+								displayBoard(board, pileCount);
+							}
 						} else if (moveString[0] == 'f' || moveString[0] == 'F') {
 
 							winner = REMOTE_FORFEIT;
@@ -420,7 +437,28 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 				cout << serverName << " has forfeited!  YOU WIN!!" << endl;
 			} else {
-				winner = check4Win(board);
+
+				bool noRocksRemain = true;
+
+				// Check for win conditions
+				for (int i = 0; i < pileCount; i++) {
+
+					if (board[i] > 0) {
+
+						noRocksRemain = false;
+					}
+				}
+
+				if (noRocksRemain) {
+
+					if (myMove) {
+
+						winner = localPlayer;
+					} else {
+
+						winner = opponent;
+					}
+				}
 			}
 		
 			if (winner == localPlayer)
