@@ -123,6 +123,24 @@ int check4Win(int board[])
 	return winner;
 }
 
+void sendChat(SOCKET s, std::string remoteIP, std::string remotePort) {
+
+	std::string message;
+
+	cout << "Comment? ";
+
+	// Used twice to avoid the return from the previous stream extraction
+	std::getline(cin, message);
+	std::getline(cin, message);
+
+	if (message.length() > 0) {
+
+		std::string sendBuffer = "C" + message;
+
+		UDP_send(s, sendBuffer.c_str(), sendBuffer.length() + 1, remoteIP.c_str(), remotePort.c_str()); //displays comment to opponent
+	}
+}
+
 bool getLocalUserMove(SOCKET s, std::string remoteIP, std::string remotePort, int board[10], int pileCount, int &oSelectedPile, int &oRemovedRockCount) //unfinished -- forfeit currently unhandled
 {
 	char choice;
@@ -138,20 +156,7 @@ bool getLocalUserMove(SOCKET s, std::string remoteIP, std::string remotePort, in
 
 		if (choice == 'c' || choice == 'C') {
 
-			std::string message;
-
-			cout << "Comment? ";
-
-			// Used twice to avoid the return from the previous stream extraction
-			std::getline(cin, message);
-			std::getline(cin, message);
-
-			if (message.length() > 0) {
-
-				std::string sendBuffer = "C" + message;
-
-				UDP_send(s, sendBuffer.c_str(), sendBuffer.length() + 1, remoteIP.c_str(), remotePort.c_str()); //displays comment to opponent
-			}
+			sendChat(s, remoteIP, remotePort);
 		} else if (choice == 'r' || choice == 'R') {
 
 			do {
