@@ -306,20 +306,35 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 		while (winner == NO_WINNER) {
 			if (myMove) {
+
+				int selectedPile, removedRocks;
+
 				// Get my move & display board
-				move = getLocalUserMove(s, board, localPlayer, remoteIP, remotePort);
-				std::cout << "Board after your move:" << std::endl;
-				updateBoard(board,move,localPlayer);
-				displayBoard(board, pileCount);
+				bool madeMove = getLocalUserMove(s, remoteIP, remotePort, board, pileCount, selectedPile, removedRocks);
 
-				// Send move to opponent
-				char moveString[MAX_SEND_BUFFER];
-				_itoa_s(move, moveString, 10);
-				UDP_send(s, moveString, strlen(moveString) + 1, remoteIP.c_str(), remotePort.c_str());
+				if (madeMove) {
 
-				if (debug) {
+					std::cout << "Board after your move:" << std::endl;
+					//updateBoard(board,move,localPlayer);
+					displayBoard(board, pileCount);
 
-					std::cout << timestamp() << " - Sent: " << moveString << " to " << remoteIP << ":" << remotePort << std::endl;
+					// Send move to opponent
+					char moveString[MAX_SEND_BUFFER];
+					strcpy_s(moveString, std::to_string(selectedPile).c_str());
+
+					if (removedRocks < 10) {
+
+						strcat_s(moveString, std::to_string(0).c_str());
+					}
+
+					strcat_s(moveString, std::to_string(removedRocks).c_str());
+
+					UDP_send(s, moveString, strlen(moveString) + 1, remoteIP.c_str(), remotePort.c_str());
+
+					if (debug) {
+
+						std::cout << timestamp() << " - Sent: " << moveString << " to " << remoteIP << ":" << remotePort << std::endl;
+					}
 				}
 			} else {
 				std::cout << "Waiting for your opponent's move..." << std::endl << std::endl;
